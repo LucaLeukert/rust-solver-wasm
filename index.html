@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<h1>Rust Wordle Solver</h1>
+
+
+<label for="good_chars">Good Chars</label><input type="text" id="good_chars">
+<label for="bad_chars">Bad Chars</label><input type="text" id="bad_chars">
+<label for="misplaced_chars">Misplaced Chars</label><input type="text" id="misplaced_chars">
+
+<button id="solve">Solve</button>
+<script type="module">
+    import __wbg_init, {solve_wordle} from "./pkg/rust_solver_wasm.js";
+
+    __wbg_init()
+
+
+    const solve = document.getElementById("solve");
+    const good_chars = document.getElementById("good_chars");
+    const bad_chars = document.getElementById("bad_chars");
+
+    const misplaced_chars = document.getElementById("misplaced_chars");
+
+    const fetchWords = async () => {
+        const file = await fetch("words.txt");
+        return await file.text();
+    }
+
+    let words = await fetchWords();
+
+    solve.addEventListener("click", async () => {
+        const good = good_chars.value;
+        const bad = bad_chars.value;
+        const misplaced = misplaced_chars.value;
+        const result = solve_wordle(words, good, bad, misplaced);
+        words = result.split('New-Words-List: ')[1]
+        console.log(result.split('New-Words-List: ')[0]);
+    })
+</script>
+</body>
+</html>
